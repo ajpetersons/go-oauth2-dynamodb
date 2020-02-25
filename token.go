@@ -207,6 +207,7 @@ func (tokenStorage *TokenStore) getData(basicID string) (to oauth2.TokenInfo, er
 				S: aws.String(basicID),
 			},
 		},
+		ConsistentRead: aws.Bool(tokenStorage.config.CONSISTENT_READS),
 	}
 	result, err := tokenStorage.session.GetItem(input)
 	if err != nil {
@@ -236,7 +237,8 @@ func (tokenStorage *TokenStore) getBasicID(cname, token string) (basicID string,
 				S: aws.String(token),
 			},
 		},
-		TableName: aws.String(cname),
+		TableName:      aws.String(cname),
+		ConsistentRead: aws.Bool(tokenStorage.config.CONSISTENT_READS),
 	}
 	result, err := tokenStorage.session.GetItem(input)
 	if err != nil {
