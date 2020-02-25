@@ -21,7 +21,7 @@ type TableConfig struct {
 }
 
 // NewConfig create dynamodb configuration
-func NewConfig(region string, endpoint string, access_key string, secret string, basic_table_name string, access_table_name string, refresh_table_name string, consistent_reads bool) (config *Config, err error) {
+func NewConfig(region string, endpoint string, access_key string, secret string, basic_table_name string, access_table_name string, refresh_table_name string) (config *Config, err error) {
 	awsConfig := aws.NewConfig()
 	if len(region) > 0 {
 		awsConfig.Region = aws.String(region)
@@ -43,8 +43,7 @@ func NewConfig(region string, endpoint string, access_key string, secret string,
 			AccessCName:  access_table_name,
 			RefreshCName: refresh_table_name,
 		},
-		ENDPOINT:         endpoint,
-		CONSISTENT_READS: consistent_reads,
+		ENDPOINT: endpoint,
 	}
 	return
 }
