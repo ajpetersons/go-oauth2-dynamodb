@@ -7,7 +7,7 @@
 ## Install
 
 ``` bash
-$ go get -u github.com/contamobi/go-oauth2-dynamodb
+$ go get -u github.com/ajpetersons/go-oauth2-dynamodb
 ```
 
 ## Usage (specifying credentials)
@@ -16,8 +16,8 @@ $ go get -u github.com/contamobi/go-oauth2-dynamodb
 package main
 
 import (
-	"github.com/contamobi/go-oauth2-dynamodb"
-	"github.com/contamobi/go-oauth2/manage"
+	"github.com/ajpetersons/go-oauth2-dynamodb"
+	"github.com/go-oauth2/oauth2/v4.manage"
 )
 
 func main() {
@@ -43,8 +43,8 @@ func main() {
 package main
 
 import (
-	"github.com/contamobi/go-oauth2-dynamodb"
-	"github.com/contamobi/go-oauth2/manage"
+	"github.com/ajpetersons/go-oauth2-dynamodb"
+	"github.com/go-oauth2/oauth2/v4.manage"
 )
 
 func main() {
@@ -88,7 +88,7 @@ go test
 ## MIT License
 
 ```
-Copyright (c) 2018 Conta.MOBI
+Copyright (c) 2021 Artūrs Jānis Pētersons
 ```
 
 [License-Url]: http://opensource.org/licenses/MIT
