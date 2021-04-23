@@ -1,14 +1,14 @@
 package dynamo
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
 // Config dynamodb configuration parameters
 type Config struct {
-	SESSION          *session.Session
+	AWSCONFIG        *aws.Config
 	TABLE            *TableConfig
 	ENDPOINT         string
 	CONSISTENT_READS bool
@@ -21,27 +21,34 @@ type TableConfig struct {
 }
 
 // NewConfig create dynamodb configuration
-func NewConfig(region string, endpoint string, access_key string, secret string, basic_table_name string, access_table_name string, refresh_table_name string) (config *Config, err error) {
+func NewConfig(region, endpoint, accessKey, secret, basicTableName, accessTableName, refreshTableName string) (config *Config, err error) {
 	awsConfig := aws.NewConfig()
 	if len(region) > 0 {
-		awsConfig.Region = aws.String(region)
+		awsConfig.Region = region
 	}
-	if len(access_key) > 0 && len(secret) > 0 {
-		awsConfig.Credentials = credentials.NewStaticCredentials(access_key, secret, "")
+	if len(accessKey) > 0 && len(secret) > 0 {
+		awsConfig.Credentials = aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secret, ""))
 	}
 	if len(endpoint) > 0 {
-		awsConfig.Endpoint = aws.String(endpoint)
+		awsConfig.EndpointResolver = aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
+			if service == dynamodb.ServiceID {
+				return aws.Endpoint{
+					PartitionID:   "aws",
+					URL:           endpoint,
+					SigningRegion: region,
+				}, nil
+			}
+			// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
+			return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+		})
 	}
-	newSession, err := session.NewSession(awsConfig)
-	if err != nil {
-		return
-	}
+
 	config = &Config{
-		SESSION: newSession,
+		AWSCONFIG: awsConfig,
 		TABLE: &TableConfig{
-			BasicCname:   basic_table_name,
-			AccessCName:  access_table_name,
-			RefreshCName: refresh_table_name,
+			BasicCname:   basicTableName,
+			AccessCName:  accessTableName,
+			RefreshCName: refreshTableName,
 		},
 		ENDPOINT: endpoint,
 	}
